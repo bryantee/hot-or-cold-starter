@@ -49,6 +49,14 @@ var count = 0;
 var newGame = function(){
 	randomNumber = setRandomNumber(1, 100);
   	console.log('Random number is: ' + randomNumber + '\n Shhhhhhh....');
+  	// remove all guesses from #guessList
+  	$('ul#guessList > li').remove();
+  	// Reset count and update HTML to 0
+  	count = 0;
+  	$('#count').empty().append('0');
+  	// change #feedback back to 'Make your guess!'
+  	$('h2#feedback').empty().append('Make Your Guess!');
+
 }
 // Sets the number between 1 and 100
 var setRandomNumber = function(min, max){
