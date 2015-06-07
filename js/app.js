@@ -18,7 +18,9 @@ $(document).ready(function(){
   		newGame();
   	});
 
-  	/*-- Take Guess from Field on button click ---*/
+  	/*-- Take Guess from user input on button click ---*/
+    // This anonymous function needs to be broken up into smaller functions
+    // ran into issues with variable scope when tried so left for now
   	$("#guessButton").click(function() {
   		var guess = $('#userGuess').val();
   		var printResults = hotOrCold(compareGuess(guess, randomNumber));
@@ -34,22 +36,21 @@ $(document).ready(function(){
         console.log(printAdditionalFeedback);
         $('h2#feedback').append(' | ' + printAdditionalFeedback);
       };
-      // increase guess counter
-  		count += 1;
-  		$('#count').empty().append(count);
-      // set seperate global variable to keep track of last guess
-      lastGuess = guess;
+  		count += 1; // increment guess counter
+  		$('#count').empty().append(count); //increment counter on page
+      lastGuess = guess; // update global variable to keep track of the last guess
 
   	});
 
+  // ready? Go!
 	newGame();
 
 });
 
 /*--- VARIABLES --*/
 
-var count = 0;
-var lastGuess;
+var count = 0; // guess count
+var lastGuess; // uesed to keep track of user's last guess
 
 /*--- FUNCTIONS --*/
 
@@ -58,15 +59,11 @@ var lastGuess;
 var newGame = function(){
 	randomNumber = setRandomNumber(1, 100);
   	console.log('Random number is: ' + randomNumber + '\n Shhhhhhh....');
-  	// remove all guesses from #guessList
-  	$('ul#guessList > li').remove();
-  	// Reset count and update HTML to 0
-  	count = 0;
-  	$('#count').empty().append('0');
-  	// change #feedback back to 'Make your guess!'
-  	$('h2#feedback').empty().append('Make Your Guess!');
-    // reset input place holder
-    $('#userGuess').val('');
+  	$('ul#guessList > li').remove(); // remove all guesses from #guessList
+  	count = 0; // Reset count and update HTML to 0
+  	$('#count').empty().append('0');	
+  	$('h2#feedback').empty().append('Make Your Guess!'); // change #feedback back to 'Make your guess!'
+    $('#userGuess').val(''); // reset input place holder
 
 }
 // Sets the number between 1 and 100
@@ -108,9 +105,11 @@ var hotOrCold = function(difference){
 var hotOrCold2 = function(difference){
   var lastDifference = compareGuess(lastGuess, randomNumber);
   var currentDifference = difference;
-  // for testing
-  console.log('Current Difference: ' + currentDifference);
-  console.log('Last Difference: ' + lastDifference);
+  
+  /*--- FOR TESTING ---*/
+  //console.log('Current Difference: ' + currentDifference);
+  //console.log('Last Difference: ' + lastDifference);
+  
   if (difference === 0) {
     return 'Good Job!';
   }
