@@ -18,29 +18,34 @@ $(document).ready(function(){
   		newGame();
   	});
 
-  	/*-- Take Guess from Field on button click ---*/
+  	/*-- Take Guess from user input on button click ---*/
+    // This anonymous function needs to be broken up into smaller functions
+    // ran into issues with variable scope when tried so left for now
   	$("#guessButton").click(function() {
   		var guess = $('#userGuess').val();
-  		var printResults = hotOrCold(compareGuess(guess, randomNumber));
-  		console.log(printResults);
-  		// give feedback in the #feedback area
-  		// but first clear the existing text
-  		$('h2#feedback').empty().append(printResults);
-  		$('ul#guessList').append('<li>' + guess + '</li>');
-  		// increase guess counter
-  		count += 1;
-  		$('#count').empty().append(count);
+      if (sanitizeGuess(guess)) {
+    		hotOrCold(compareGuess(guess, randomNumber));
+    		$('ul#guessList').append('<li>' + guess + '</li>');
+    		count += 1; // increment guess counter
+    		$('#count').empty().append(count); //increment counter on page
+        lastGuess = guess; // update global variable to keep track of the last guess
+      }
+
   	});
 
+  // ready? Go!
 	newGame();
-
-
 
 });
 
+/*--- END OF DOCUMENT LOAD FUNCTION ---*/
+
+/////////////////////////////////////////
+
 /*--- VARIABLES --*/
 
-var count = 0;
+var count = 0; // guess count
+var lastGuess; // uesed to keep track of user's last guess
 
 /*--- FUNCTIONS --*/
 
@@ -49,13 +54,11 @@ var count = 0;
 var newGame = function(){
 	randomNumber = setRandomNumber(1, 100);
   	console.log('Random number is: ' + randomNumber + '\n Shhhhhhh....');
-  	// remove all guesses from #guessList
-  	$('ul#guessList > li').remove();
-  	// Reset count and update HTML to 0
-  	count = 0;
-  	$('#count').empty().append('0');
-  	// change #feedback back to 'Make your guess!'
-  	$('h2#feedback').empty().append('Make Your Guess!');
+  	$('ul#guessList > li').remove(); // remove all guesses from #guessList
+  	count = 0; // Reset count and update HTML to 0
+  	$('#count').empty().append('0');	
+  	$('h2#feedback').empty().append('Make Your Guess!'); // change #feedback back to 'Make your guess!'
+    $('#userGuess').val(''); // reset input place holder
 
 }
 // Sets the number between 1 and 100
@@ -69,26 +72,74 @@ var compareGuess = function(guess, number){
 	return difference;
 }
 
+var sanitizeGuess = function(guess) {
+  if (guess === '') {
+    alert("This is blank");
+    return false;
+  }
+  else if (isNaN(parseInt(guess))){
+    alert("Not a number");
+    return false;
+  }
+  else if (guess <= 0){ 
+    return false;
+  }
+  else if (guess >= 100) {
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+
 // takes the difference as argument, determines hot, cold or correct
 var hotOrCold = function(difference){
+  var output = ''
+  console.log(output);
+
 	if (difference === 0) {
-		return 'Win!';
+		//return 'Win!';
+    output += 'Win!';
 	}
 	else if (difference <= 5) {
-		return 'Blazin\'!';
+		//return 'Blazin\'!';
+    output += 'Blazin';
 	}
 	else if (difference <= 25) {
-		return 'Hot!';
+		output += 'Hot!';
+
 	}
 	else if (difference <= 50) {
-		return 'Warm...';
+		output += 'Warm...';
 	}
 	else if (difference >= 51) {
-		return 'You\'re as cold as ice...';
+		output += 'You\'re as cold as ice...';
 	}
 	else {
-		return 'Cold!';
+		output += 'Cold!';
 	}
+  console.log(output);
+
+  if (count >= 1) {
+    var lastDifference = compareGuess(lastGuess, randomNumber);
+    var currentDifference = difference;
+    
+    /*--- FOR TESTING ---*/
+    //console.log('Current Difference: ' + currentDifference);
+    //console.log('Last Difference: ' + lastDifference);
+    output += ' | ';
+
+    if (difference === 0) {
+      output += 'Good Job!';
+    }
+    else if (currentDifference <= lastDifference) {
+      output += 'Getting warmer...';
+    }
+    else {
+      output += 'Getting colder...';
+    }
+  }
+$('h2#feedback').empty().append(output);
 }
 
 
